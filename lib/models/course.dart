@@ -20,7 +20,7 @@ class Course {
   final double rating;
   final int students;
   final double price;
-  final double progress; // 0.0 - 1.0
+  final double progress;
   final List<Lesson> lessons;
 
   Course({
@@ -36,4 +36,19 @@ class Course {
     this.progress = 0.0,
     this.lessons = const [],
   });
+
+  factory Course.fromJson(Map<String, dynamic> json) {
+    return Course(
+      id: json['id'].toString(),
+      title: json['title'] ?? '',
+      instructor: json['instructor'] ?? '',
+      description: json['description'] ?? '',
+      imageUrl: json['image_url'] ?? '',
+      category: json['category'] ?? '',
+      rating: (json['rating'] as num?)?.toDouble() ?? 0,
+      students: (json['students'] as num?)?.toInt() ?? 0,
+      price: (json['price'] as num?)?.toDouble() ?? 0,
+      progress: (json['progress'] as num?)?.toDouble() ?? 0,
+    );
+  }
 }

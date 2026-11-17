@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../data/mock_data.dart';
+import '../main.dart';
 import '../theme/app_theme.dart';
+import 'login_screen.dart';
 import 'certificate_screen.dart';
+import '../data/mock_data.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -24,9 +26,8 @@ class ProfileScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 44,
                     backgroundColor: Colors.grey.shade200,
-                    backgroundImage: CachedNetworkImageProvider(
-                      user.avatarUrl,
-                    ),
+                    backgroundImage:
+                    CachedNetworkImageProvider(user.avatarUrl),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -95,8 +96,7 @@ class ProfileScreen extends StatelessWidget {
                   'Issued ${cert.issuedDate.year}',
                   style: const TextStyle(fontSize: 12),
                 ),
-                trailing:
-                const Icon(Icons.chevron_right_rounded),
+                trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -108,7 +108,19 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 24),
             _menuTile(Icons.settings_outlined, 'Settings'),
             _menuTile(Icons.help_outline_rounded, 'Help & Support'),
-            _menuTile(Icons.logout_rounded, 'Log Out'),
+            _menuTile(
+              Icons.logout_rounded,
+              'Log Out',
+              onTap: () async {
+                await supabase.auth.signOut();
+                if (!context.mounted) return;
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -146,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _menuTile(IconData icon, String label) {
+  Widget _menuTile(IconData icon, String label, {VoidCallback? onTap}) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: AppColors.textDark),
@@ -158,6 +170,7 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: onTap,
     );
   }
 }
